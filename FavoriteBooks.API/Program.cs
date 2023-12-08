@@ -3,6 +3,7 @@ using FavoriteBooks.API.Business.Services;
 using FavoriteBooks.API.Business.Services.Contracts;
 using FavoriteBooks.API.Data;
 using FavoriteBooks.API.Data.Entities;
+using FavoriteBooks.API.Data.Initializers;
 using FavoriteBooks.API.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -46,6 +47,10 @@ builder.Services.AddAuthentication(options =>
     });
 
 var app = builder.Build();
+
+var scope = app.Services.CreateScope();
+var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+await RolesInitializer.InitializeAsync(roleManager);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
