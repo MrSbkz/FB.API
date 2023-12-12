@@ -2,9 +2,11 @@
 
 namespace FavoriteBooks.API.Models;
 
-public class ResponseBase(dynamic data, HttpStatusCode statusCode = HttpStatusCode.OK)
+public class ResponseBase(dynamic? data = null, IList<string>? errors = null, HttpStatusCode statusCode = HttpStatusCode.OK)
 {
-    public dynamic Data { get; set; } = data;
+    public dynamic? Data { get; set; } = data;
+
+    public IList<string>? Errors { get; set; } = errors;
 
     public HttpStatusCode StatusCode { get; set; } = statusCode;
 }

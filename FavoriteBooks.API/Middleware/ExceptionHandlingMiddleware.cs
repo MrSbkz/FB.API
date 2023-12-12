@@ -22,8 +22,11 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
     {
         var response = exception switch
         {
-            NotFoundException _ => new ResponseBase(exception.Message, HttpStatusCode.NotFound),
-            _ => new ResponseBase(exception.Message, HttpStatusCode.InternalServerError)
+            NotFoundException _ => new ResponseBase(null, new List<string>{ exception.Message }, HttpStatusCode.NotFound),
+            AlreadyExistsException _ => new ResponseBase(null, new List<string>{ exception.Message }, HttpStatusCode.Conflict),
+            InvalidPasswordException invalidPasswordException => new ResponseBase(null, invalidPasswordException.GetErrors(), HttpStatusCode.Forbidden),
+            WrongCredentialsException _ => new ResponseBase(null, new List<string> { exception.Message }, HttpStatusCode.Unauthorized),
+            _ => new ResponseBase(null, new List<string>{ exception.Message }, HttpStatusCode.InternalServerError)
         };
 
         context.Response.ContentType = "application/json";
