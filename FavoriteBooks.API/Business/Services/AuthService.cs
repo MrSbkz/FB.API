@@ -14,8 +14,6 @@ namespace FavoriteBooks.API.Business.Services;
 public class AuthService(UserManager<User> userManager, IConfiguration configuration)
     : IAuthService
 {
-    private readonly IConfiguration _configuration = configuration;
-
     public async Task<string> RegisterAsync(RegisterModel model)
     {
         var existingUser = await userManager.FindByNameAsync(model.UserName);
@@ -62,11 +60,11 @@ public class AuthService(UserManager<User> userManager, IConfiguration configura
         };
 
         authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"] ?? string.Empty));
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"] ?? string.Empty));
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["JWT:ValidIssuer"],
-            audience: _configuration["JWT:ValidAudience"],
+            issuer: configuration["JWT:ValidIssuer"],
+            audience: configuration["JWT:ValidAudience"],
             expires: DateTime.Now.AddDays(30),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)

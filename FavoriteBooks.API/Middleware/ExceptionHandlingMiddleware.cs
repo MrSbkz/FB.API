@@ -24,7 +24,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         {
             NotFoundException _ => new ResponseBase(null, new List<string>{ exception.Message }, HttpStatusCode.NotFound),
             AlreadyExistsException _ => new ResponseBase(null, new List<string>{ exception.Message }, HttpStatusCode.Conflict),
-            InvalidPasswordException _ => new ResponseBase(null, GetCredentialsErrorList(exception), HttpStatusCode.Forbidden),
+            InvalidPasswordException invalidPasswordException => new ResponseBase(null, invalidPasswordException.GetErrors(), HttpStatusCode.Forbidden),
             WrongCredentialsException _ => new ResponseBase(null, new List<string> { exception.Message }, HttpStatusCode.Unauthorized),
             _ => new ResponseBase(null, new List<string>{ exception.Message }, HttpStatusCode.InternalServerError)
         };
@@ -32,17 +32,5 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)response.StatusCode;
         await context.Response.WriteAsJsonAsync(response);
-    }
-
-    private static IList<string> GetCredentialsErrorList(Exception exception)
-    {
-        var ex = (InvalidPasswordException)exception;
-        var errors = new List<string> { exception.Message };
-        var result = ex.GetIdentityResult();
-
-        if(result != null)
-            errors.AddRange(result.Errors.Select(x => x.Description).ToList());
-
-        return errors;
     }
 }

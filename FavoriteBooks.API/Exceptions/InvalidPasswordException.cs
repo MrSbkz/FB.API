@@ -4,8 +4,13 @@ namespace FavoriteBooks.API.Exceptions;
 
 public class InvalidPasswordException(string message, IdentityResult? identityResult) : Exception(message)
 {
-    public IdentityResult? GetIdentityResult()
+    public IList<string> GetErrors()
     {
-        return identityResult;
+        var errors = new List<string> { Message };
+
+        if(identityResult != null)
+            errors.AddRange(identityResult.Errors.Select(x => x.Description).ToList());
+
+        return errors;
     }
 }

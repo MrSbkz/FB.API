@@ -1,4 +1,5 @@
 using FavoriteBooks.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FavoriteBooks.API.Controllers
@@ -20,6 +21,7 @@ namespace FavoriteBooks.API.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
+        [Authorize]
         public IActionResult Get()
         {
             //throw new NotFoundException("Weather forecast not found");
