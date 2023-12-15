@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FavoriteBooks.API", "FavoriteBooks.API\FavoriteBooks.API.csproj", "{8FE6C33F-59D9-4A5A-BE0D-678E6ABDB276}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FavoriteBooks.API", "FavoriteBooks.API\FavoriteBooks.API.csproj", "{8FE6C33F-59D9-4A5A-BE0D-678E6ABDB276}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5A64CC3D-9919-43D6-BAD2-D88F32E1D6B8}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

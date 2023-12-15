@@ -4,7 +4,7 @@ using FavoriteBooks.API.Models;
 
 namespace FavoriteBooks.API.Middleware;
 
-public class ExceptionHandlingMiddleware(RequestDelegate next)
+public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -14,11 +14,11 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(context, ex);
+            await HandleExceptionAsync(context, ex, logger);
         }
     }
     
-    private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private static async Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger<ExceptionHandlingMiddleware> logger)
     {
         var response = exception switch
         {
@@ -26,11 +26,18 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
             AlreadyExistsException _ => new ResponseBase(null, new List<string>{ exception.Message }, HttpStatusCode.Conflict),
             InvalidPasswordException invalidPasswordException => new ResponseBase(null, invalidPasswordException.GetErrors(), HttpStatusCode.Forbidden),
             WrongCredentialsException _ => new ResponseBase(null, new List<string> { exception.Message }, HttpStatusCode.Unauthorized),
-            _ => new ResponseBase(null, new List<string>{ exception.Message }, HttpStatusCode.InternalServerError)
+            _ => GetUnhandledExceptionResult(exception, logger)
         };
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)response.StatusCode;
         await context.Response.WriteAsJsonAsync(response);
+    }
+
+    private static ResponseBase GetUnhandledExceptionResult(Exception exception, ILogger<ExceptionHandlingMiddleware> logger)
+    {
+        logger.LogError(exception, "An unexpected error occured");
+
+        return new ResponseBase(null, new List<string> { exception.Message }, HttpStatusCode.InternalServerError);
     }
 }
