@@ -1,30 +1,21 @@
 using FavoriteBooks.API.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FavoriteBooks.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class WeatherForecastController(ILogger<WeatherForecastController> logger) : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
-        {
-            _logger = logger;
-        }
-
         [HttpGet(Name = "GetWeatherForecast")]
-        [Authorize]
         public IActionResult Get()
         {
-            //throw new NotFoundException("Weather forecast not found");
+            logger.LogInformation("Getting weather forecast");
 
             return Ok(new ResponseBase(Enumerable.Range(1, 5).Select(index =>
                     new WeatherForecast
